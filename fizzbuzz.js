@@ -53,14 +53,14 @@ function fizzbuzzUpTo(max) {
             let bFound = false;
             while (pos < string.length) {
                 if (string[pos] === 'B') {
-                    string = string.slice(0, pos) + 'Bong' + string.slice(pos);
+                    string = string.slice(0, pos) + 'Fezz' + string.slice(pos);
                     bFound = true;
                     break;
                 }
                 pos += 1;
             }
             if (bFound === false) {
-                string += 'Bong';
+                string += 'Fezz';
             }
         }
         if (i % 17 === 0) {
