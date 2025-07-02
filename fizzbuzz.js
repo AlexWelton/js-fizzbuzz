@@ -1,54 +1,50 @@
+const prompt = require('prompt-sync')();
+
 // This is our main function
 function fizzbuzz() {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
+    let max = prompt('Maximum number? >> ');
+    let rules;
 
-    rl.question(`Max number?`, max => {
-        fizzbuzzUpTo(max);
-        rl.close();
-    });
+    if (prompt(`Custom Rules? >> `).toLowerCase() === "y") {
+        rules = getRules();
+    }
+    else {
+        rules = [3,5,7,9,11,13,17];
+    }
+
+    fizzbuzzUpTo(max,rules);
+
 }
 
-// function getRules() {
-//   rl.question(`Add new rule? Y/N >>`, response => {
-//     if (response.lower() == 'y') {
-//       let rule = addRule();
-//       return getRules().append(rule);
-//     } else {
-//       return [];
-//     }
-//     rl.close();
-//   });
-// }
+function getRules() {
+    let response = prompt('Enter rule to activate ("n" to finish) >> ');
+    let rules = [];
+    while (response !== 'n') {
+        rules.push(parseInt(response));
+        console.log("Rules active = ".concat(rules.toString()));
+        response = prompt('Enter rule to activate ("n" to finish) >> ');
+    }
+    return rules;
+}
 
-// function addRule() {
-//   rl.question('New Rule (Format : number|string) >>', response => {
-//     let number = response.split('|')[0];
-//     let string = response.split('|')[1];
-//     return new Set([number, string]);
-//     rl.close();
-//   });
-// }
+function fizzbuzzUpTo(max, rules) {
 
-function fizzbuzzUpTo(max) {
     for (let i = 1; i <= max; i++) {
         let components = [];
 
-        if (i % 3 === 0) {
+        if (i % 3 === 0 && rules.indexOf(3) !== -1) {
             components.push('Fizz');
         }
-        if (i % 5 === 0) {
+        if (i % 5 === 0 && rules.indexOf(5) !== -1) {
             components.push('Buzz');
         }
-        if (i % 7 === 0) {
+        if (i % 7 === 0 && rules.indexOf(7) !== -1) {
             components.push('Bang');
         }
-        if (i % 11 === 0) {
+        if (i % 11 === 0 && rules.indexOf(11) !== -1) {
             components = ['Bong'];
         }
-        if (i % 13 === 0) {
+        if (i % 13 === 0 && rules.indexOf(13) !== -1) {
             let pos = 0;
             let bFound = false;
             while (pos < components.length) {
@@ -66,7 +62,7 @@ function fizzbuzzUpTo(max) {
                 components.push('Fezz');
             }
         }
-        if (i % 17 === 0) {
+        if (i % 17 === 0 && rules.indexOf(17) !== -1) {
             let rev = [];
             for (let j = components.length - 1; j >= 0; j--) {
                 rev.push(components[j]);
@@ -74,16 +70,18 @@ function fizzbuzzUpTo(max) {
             components = rev;
         }
 
-        if (components === []) {
+        if (components.length === 0) {
             console.log(i);
         } else {
             let out = '';
             for (let j = 0; j < components.length; j++) {
                 out += components[j];
             }
+            console.log(out);
         }
+
     }
 }
 
 // Now, we run the main function:
-fizzbuzzUpTo(120);
+fizzbuzz();
