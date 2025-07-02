@@ -34,48 +34,56 @@ function fizzbuzz() {
 
 function fizzbuzzUpTo(max) {
     for (let i = 1; i <= max; i++) {
-        let string = '';
+        let components = [];
 
         if (i % 3 === 0) {
-            string += 'Fizz';
+            components.push('Fizz');
         }
         if (i % 5 === 0) {
-            string += 'Buzz';
+            components.push('Buzz');
         }
         if (i % 7 === 0) {
-            string += 'Bang';
+            components.push('Bang');
         }
         if (i % 11 === 0) {
-            string = 'Bong';
+            components = ['Bong'];
         }
         if (i % 13 === 0) {
             let pos = 0;
             let bFound = false;
-            while (pos < string.length) {
-                if (string[pos] === 'B') {
-                    string = string.slice(0, pos) + 'Fezz' + string.slice(pos);
+            while (pos < components.length) {
+                if (components[pos] === 'B') {
+                    components = components
+                        .slice(0, pos)
+                        .push('Fezz')
+                        .concat(components.slice(pos));
                     bFound = true;
                     break;
                 }
                 pos += 1;
             }
             if (bFound === false) {
-                string += 'Fezz';
+                components.push('Fezz');
             }
         }
         if (i % 17 === 0) {
-            let rev = '';
-            for (let j = string.length - 1; j >= 0; j--) {
-                rev += string.charAt(j);
+            let rev = [];
+            for (let j = components.length - 1; j >= 0; j--) {
+                rev.push(components[j]);
             }
-            string = rev;
+            components = rev;
         }
 
-        if (string === '') {
+        if (components === []) {
             console.log(i);
-        } else console.log(string);
+        } else {
+            let out = '';
+            for (let j = 0; j < components.length; j++) {
+                out += components[j];
+            }
+        }
     }
 }
 
 // Now, we run the main function:
-fizzbuzzUpTo(100);
+fizzbuzzUpTo(120);
