@@ -18,7 +18,9 @@ function fizzbuzz() {
 
 function createRules() {
     let question = "Add new rule ('n' to finish)" +
-        "Format : <number> reverse\n" +
+        "Format : \n" +
+        "<number> reverse\n" +
+        "<number> regex <regex> <insertion> <appendOnMiss>\n" +
         "<number> replace <replacement>\n" +
         "<number> append <suffix>\n";
     console.log(question);
@@ -39,6 +41,12 @@ function createRules() {
                 let replacement = response.split(" ")[2];
                 rules.set(num,["replace", replacement]);
                 break;
+            case "regex":
+                let matchingRule = response.split(" ")[2];
+                let toInsert = response.split(" ")[3];
+                let appendOnMiss = response.split(" ")[4];
+                rules.set(num,["regex", matchingRule, toInsert, appendOnMiss]);
+                break;
             default:
                 console.log("Invalid rule");
                 break;
@@ -54,7 +62,8 @@ function fizzbuzzUpTo(max, rules) {
         let components = [];
         for (let [num, rule] of rules) {
             if (i % num === 0) {
-                switch(rule[0]) {
+                switch (rule[0]) {
+
                     case "reverse":
                         let rev = [];
                         for (let j = components.length - 1; j >= 0; j--) {
@@ -70,32 +79,34 @@ function fizzbuzzUpTo(max, rules) {
                         let replacement = rule[1];
                         components = [replacement];
                         break;
+                    case "regex":
+                        let matchingRule = rule[1];
+                        let toInsert = rule[2];
+                        let appendOnMiss = rule[3];
+                        let pos = 0;
+
+                        let found = false;
+
+                        while (pos < components.length) {
+                            let regex = new RegExp("^" + matchingRule + "$");
+                            if (regex.test(components[pos])) {
+                                let head = components.slice(0, pos);
+                                let tail = components.slice(pos);
+                                components = head.concat([toInsert]).concat(tail);
+                                found = true;
+                                break;
+                            }
+                            pos += 1;
+                        }
+                        if (found === false && appendOnMiss === 'true') {
+                            components.push(toInsert);
+                        }
+                        break;
                     default:
                         break;
                 }
             }
         }
-
-        //
-        // if (i % 13 === 0 && rules.indexOf(13) !== -1) {
-        //     let pos = 0;
-        //     let bFound = false;
-        //
-        //     while (pos < components.length) {
-        //         if (components[pos][0] === 'B') {
-        //             let head = components.slice(0, pos);
-        //             let tail = components.slice(pos);
-        //             components = head.concat(["Fezz"]).concat(tail);
-        //             bFound = true;
-        //             break;
-        //         }
-        //         pos += 1;
-        //     }
-        //     if (bFound === false) {
-        //         components.push('Fezz');
-        //     }
-        // }
-
         if (components.length === 0) {
             console.log(i);
         } else {
