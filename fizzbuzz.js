@@ -1,3 +1,4 @@
+const readline = require('node:readline');
 // This is our main function
 function fizzbuzz() {
     const rl = readline.createInterface({
@@ -6,31 +7,35 @@ function fizzbuzz() {
     });
 
     rl.question(`Max number?`, max => {
-        fizzbuzzUpTo(max);
+        getRules(rl, max, []);
+    });
+}
+
+function getRules(rl, max, rules) {
+
+    rl.question(`Add new rule? Y/N >>`, response => {
+        if (response.toLowerCase() == 'y') {
+          let rule = addRule();
+          getRules(rl,max,rules.append(rule));
+        } else {
+          fizzbuzzWithRules(max, rules);
+        }
         rl.close();
     });
 }
 
-// function getRules() {
-//   rl.question(`Add new rule? Y/N >>`, response => {
-//     if (response.lower() == 'y') {
-//       let rule = addRule();
-//       return getRules().append(rule);
-//     } else {
-//       return [];
-//     }
-//     rl.close();
-//   });
-// }
+function addRule() {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
 
-// function addRule() {
-//   rl.question('New Rule (Format : number|string) >>', response => {
-//     let number = response.split('|')[0];
-//     let string = response.split('|')[1];
-//     return new Set([number, string]);
-//     rl.close();
-//   });
-// }
+    rl.question('New Rule (Format : number|string) >>', response => {
+        let number = response.split('|')[0];
+        let string = response.split('|')[1];
+        return new Set([number, string]);
+    });
+}
 
 function fizzbuzzUpTo(max) {
     for (let i = 1; i <= max; i++) {
@@ -74,16 +79,26 @@ function fizzbuzzUpTo(max) {
             components = rev;
         }
 
-        if (components === []) {
+        if (components.length === 0) {
             console.log(i);
         } else {
             let out = '';
             for (let j = 0; j < components.length; j++) {
                 out += components[j];
             }
+            console.log(out);
         }
     }
 }
 
+function fizzbuzzWithRules(max, rules) {
+    for (let i = 1; i <= max; i++) {
+        let components = [];
+
+
+    }
+}
+
+
 // Now, we run the main function:
-fizzbuzzUpTo(120);
+fizzbuzz();
