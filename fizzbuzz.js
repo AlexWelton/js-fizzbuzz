@@ -47,12 +47,12 @@ function fizzbuzzUpTo(max, rules) {
         if (i % 13 === 0 && rules.indexOf(13) !== -1) {
             let pos = 0;
             let bFound = false;
+
             while (pos < components.length) {
-                if (components[pos] === 'B') {
-                    components = components
-                        .slice(0, pos)
-                        .push('Fezz')
-                        .concat(components.slice(pos));
+                if (components[pos][0] === 'B') {
+                    let head = components.slice(0, pos);
+                    let tail = components.slice(pos);
+                    components = head.concat(["Fezz"]).concat(tail);
                     bFound = true;
                     break;
                 }
