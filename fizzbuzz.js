@@ -1,83 +1,100 @@
-const readline = require('node:readline');
+const prompt = require('prompt-sync')();
+
 // This is our main function
 function fizzbuzz() {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
+    let max = prompt('Maximum number? >> ');
+    let rules;
 
-    rl.question(`Max number?`, max => {
-        getRules(rl, max, []);
-    });
+    if (prompt(`Custom Rules? >> `).toLowerCase() === "y") {
+        rules = createRules();
+    }
+    else {
+        rules = [3,5,7,9,11,13,17];
+    }
+
+    fizzbuzzUpTo(max,rules);
+
 }
 
-function getRules(rl, max, rules) {
-
-    rl.question(`Add new rule? Y/N >>`, response => {
-        if (response.toLowerCase() == 'y') {
-          let rule = addRule();
-          getRules(rl,max,rules.append(rule));
-        } else {
-          fizzbuzzWithRules(max, rules);
+function createRules() {
+    let question = "Add new rule ('n' to finish)" +
+        "Format : <number> reverse\n" +
+        "<number> replace <replacement>\n" +
+        "<number> append <suffix>\n";
+    console.log(question);
+    let response = prompt(">> ");
+    let rules = new Map();
+    while (response !== 'n') {
+        let num = response.split(" ")[0];
+        let type = response.split(" ")[1];
+        switch(type) {
+            case "reverse":
+                rules.set(num,["reverse"]);
+                break;
+            case "append":
+                let suffix = response.split(" ")[2];
+                rules.set(num,["append", suffix]);
+                break;
+            case "replace":
+                let replacement = response.split(" ")[2];
+                rules.set(num,["replace", replacement]);
+                break;
+            default:
+                console.log("Invalid rule");
+                break;
         }
-        rl.close();
-    });
+        console.log("Rule Added!");
+        response = prompt(">> ");
+    }
+    return rules;
 }
 
-function addRule() {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
-
-    rl.question('New Rule (Format : number|string) >>', response => {
-        let number = response.split('|')[0];
-        let string = response.split('|')[1];
-        return new Set([number, string]);
-    });
-}
-
-function fizzbuzzUpTo(max) {
+function fizzbuzzUpTo(max, rules) {
     for (let i = 1; i <= max; i++) {
         let components = [];
-
-        if (i % 3 === 0) {
-            components.push('Fizz');
-        }
-        if (i % 5 === 0) {
-            components.push('Buzz');
-        }
-        if (i % 7 === 0) {
-            components.push('Bang');
-        }
-        if (i % 11 === 0) {
-            components = ['Bong'];
-        }
-        if (i % 13 === 0) {
-            let pos = 0;
-            let bFound = false;
-            while (pos < components.length) {
-                if (components[pos] === 'B') {
-                    components = components
-                        .slice(0, pos)
-                        .push('Fezz')
-                        .concat(components.slice(pos));
-                    bFound = true;
-                    break;
+        for (let [num, rule] of rules) {
+            if (i % num === 0) {
+                switch(rule[0]) {
+                    case "reverse":
+                        let rev = [];
+                        for (let j = components.length - 1; j >= 0; j--) {
+                            rev.push(components[j]);
+                        }
+                        components = rev;
+                        break;
+                    case "append":
+                        let suffix = rule[1];
+                        components.push(suffix);
+                        break;
+                    case "replace":
+                        let replacement = rule[1];
+                        components = [replacement];
+                        break;
+                    default:
+                        break;
                 }
-                pos += 1;
-            }
-            if (bFound === false) {
-                components.push('Fezz');
             }
         }
-        if (i % 17 === 0) {
-            let rev = [];
-            for (let j = components.length - 1; j >= 0; j--) {
-                rev.push(components[j]);
-            }
-            components = rev;
-        }
+
+        //
+        // if (i % 13 === 0 && rules.indexOf(13) !== -1) {
+        //     let pos = 0;
+        //     let bFound = false;
+        //
+        //     while (pos < components.length) {
+        //         if (components[pos][0] === 'B') {
+        //             let head = components.slice(0, pos);
+        //             let tail = components.slice(pos);
+        //             components = head.concat(["Fezz"]).concat(tail);
+        //             bFound = true;
+        //             break;
+        //         }
+        //         pos += 1;
+        //     }
+        //     if (bFound === false) {
+        //         components.push('Fezz');
+        //     }
+        // }
 
         if (components.length === 0) {
             console.log(i);
@@ -88,17 +105,9 @@ function fizzbuzzUpTo(max) {
             }
             console.log(out);
         }
-    }
-}
-
-function fizzbuzzWithRules(max, rules) {
-    for (let i = 1; i <= max; i++) {
-        let components = [];
-
 
     }
 }
-
 
 // Now, we run the main function:
 fizzbuzz();
